@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS Fitness Club Body Composition Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            background-image: url('images/background_image_gym.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        h1, h2 {
+            /* color: #bec1e7; */
+            color: white;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        form, #results, table, .formula {
+            background: rgba(51, 51, 51, 0.8);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+        form {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #ecf0f1;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+
+        select:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            outline: none;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        select option {
+            background-color: #2c3e50;
+            color: #ffffff;
+        }
+
+        select::-ms-expand {
+            display: none;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            outline: none;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        input[type="submit"] {
+            background: #2ecc71;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 18px;
+            text-transform: uppercase;
+            transition: background 0.3s ease;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        input[type="submit"]:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(51, 51, 51, 0.8);
+        }
+        th, td {
+            border: 1px solid #4ecdc4;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4ecdc4;
+            color: #1a1a1a;
+            text-transform: uppercase;
+        }
+        .icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .formula {
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: rgba(51, 51, 51, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        @media print {
+            body {
+                background: none;
+                color: #000;
+            }
+            body::before {
+                display: none;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            h1, h2 {
+                color: #000;
+                text-shadow: none;
+            }
+            form, #results, table, .formula {
+                background: none;
+                box-shadow: none;
+                padding: 10px 0;
+                page-break-inside: avoid;
+            }
+            form {
+                border: 2px solid #000;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            input[type="submit"] {
+                display: none;
+            }
+            label {
+                color: #000;
+                text-shadow: none;
+            }
+            input[type="text"], input[type="number"], input[type="date"], select {
+                border: 1px solid #000;
+                background-color: #f0f0f0;
+                color: #000;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            }
+            select option {
+                background-color: #ffffff;
+                color: #000000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            WS Fitness Club Body Composition Calculator
+        </h1>
+        
+        <form id="bodyCompositionForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+            
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+            
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+            
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" name="weight" step="0.1" required>
+            
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" name="height" step="0.1" required>
+            
+            <label for="neck">Neck Circumference (cm):</label>
+            <input type="number" id="neck" name="neck" step="0.1" required>
+            
+            <label for="waist">Waist Circumference (cm):</label>
+            <input type="number" id="waist" name="waist" step="0.1" required>
+            
+            <label for="hip">Hip Circumference (cm, females only):</label>
+            <input type="number" id="hip" name="hip" step="0.1">
+            
+            <input type="submit" value="Calculate">
+        </form>
+        
+        <div id="results"></div>
+        
+        <h2>Body Fat Percentage Categories</h2>
+        <table>
+            <tr>
+                <th>Classification</th>
+                <th>Women (% fat)</th>
+                <th>Men (% fat)</th>
+            </tr>
+            <tr>
+                <td>Essential Fat</td>
+                <td>10-12%</td>
+                <td>2-4%</td>
+            </tr>
+            <tr>
+                <td>Athletes</td>
+                <td>14-20%</td>
+                <td>6-13%</td>
+            </tr>
+            <tr>
+                <td>Fitness</td>
+                <td>21-24%</td>
+                <td>14-17%</td>
+            </tr>
+            <tr>
+                <td>Acceptable</td>
+                <td>25-31%</td>
+                <td>18-25%</td>
+            </tr>
+            <tr>
+                <td>Obese</td>
+                <td>32%+</td>
+                <td>25%+</td>
+            </tr>
+        </table>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>BMI Range</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Below 18.5</td><td>Underweight</td></tr>
+                <tr><td>18.5 to 24.9</td><td>Moderate weight</td></tr>
+                <tr><td>25 to 29.9</td><td>Overweight</td></tr>
+                <tr><td>30 and above</td><td>Obesity</td></tr>
+            </tbody>
+        </table>
+    
+        <h2>Formulas Used</h2>
+        <p><strong>These formulas are based on the US Navy Body Fat Formula, which uses circumferences
+            and height to estimate body fat percentage.</strong></p>        
+    </div>
+
+    <script>
+        document.getElementById('bodyCompositionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const date = document.getElementById('date').value;
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const neck = parseFloat(document.getElementById('neck').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+            const hip = parseFloat(document.getElementById('hip').value);
+            
+            // Calculate Body Fat Percentage (U.S. Navy Method)
+            let bodyFat;
+            if (gender === 'male') {
+                bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450;
+            } else {
+                bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450;
+            }
+            
+            // Calculate BMI
+            const bmi = weight / Math.pow(height / 100, 2);
+            
+            // Calculate BMR (Mifflin-St Jeor Equation)
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+            
+            // Calculate calorie targets
+            const maintenanceCalories = bmr * 1.55;
+            const fatLossCalories = bmr * 1.2;
+            const extremeFatLossCalories = bmr * 1.1;
+            
+            // Display results
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Results for ${name} (${date})</h2>
+                <table>
+                    <tr><th>Metric</th><th>Value</th></tr>
+                    <tr><td>Body Fat Percentage</td><td>${bodyFat.toFixed(1)}%</td></tr>
+                    <tr><td>BMI</td><td>${bmi.toFixed(1)}</td></tr>
+                    <tr><td>Maintenance Calories</td><td>${Math.round(maintenanceCalories)} kcal</td></tr>
+                    <tr><td>Fat Loss Calories</td><td>${Math.round(fatLossCalories)} kcal</td></tr>
+                    <tr><td>Extreme Fat Loss Calories</td><td>${Math.round(extremeFatLossCalories)} kcal</td></tr>
+                </table>
+            `;
+        });
+    </script>
+</body>
+</html>
+
